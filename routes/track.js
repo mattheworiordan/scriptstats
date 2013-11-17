@@ -3,7 +3,8 @@ var persistence = require('../metrics/persistence.js');
 // GET /track/:script/:app_id
 exports.impression = function(req, res) {
   var javascriptEnabled,
-      appId = req.params.app_id
+      appId = req.params.app_id,
+      firstVisit = true;
 
   res.set("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
   res.set("Pragma", "no-cache"); // HTTP 1.0.
@@ -28,7 +29,13 @@ exports.impression = function(req, res) {
     return;
   }
 
-  persistence.save(appId, javascriptEnabled, true);
+  if (req.session.subsequentVisit) {
+    firstVisit = false;
+  } else {
+    req.session.subsequentVisit = true;
+  }
+
+  persistence.save(appId, javascriptEnabled, firstVisit);
   res.set('Content-Type', 'image/gif');
   res.sendfile('public/images/blank.gif');
 };
