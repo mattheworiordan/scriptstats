@@ -5,6 +5,10 @@ exports.impression = function(req, res) {
   var javascriptEnabled,
       appId = req.params.app_id
 
+  res.set("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+  res.set("Pragma", "no-cache"); // HTTP 1.0.
+  res.set("Expires", 0); // Proxies.
+
   switch (req.params.script) {
     case 'js':
       javascriptEnabled = true;
