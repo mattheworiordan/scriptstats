@@ -1,3 +1,5 @@
+"use strict";
+
 function Persistence() {
   var APP_NAMESPACE = 'stats:app',
       GLOBAL_NAMESPACE = 'stats:global',
@@ -9,14 +11,16 @@ function Persistence() {
       persistTimer = null,
       appCache = {};
 
-  var appBase = {
-    users: {
-      js_enabled: 0,
-      js_disabled: 0
-    },
-    pageImpressions: {
-      js_enabled: 0,
-      js_disabled: 0
+  var appBase = function() {
+    return {
+      users: {
+        js_enabled: 0,
+        js_disabled: 0
+      },
+      pageImpressions: {
+        js_enabled: 0,
+        js_disabled: 0
+      }
     }
   };
 
@@ -29,7 +33,7 @@ function Persistence() {
   // save method persists metrics to appCache
   var save = function(appId, javascriptEnabled, newUserSession) {
     appId = santizeAppId(appId);
-    if (!appCache[appId]) { appCache[appId] = appBase; }
+    if (!appCache[appId]) { appCache[appId] = appBase(); }
     if (!persistTimer) { persistTimer = setTimeout(persistCacheToDatabase, 1000); }
 
     var app = appCache[appId],
@@ -43,29 +47,28 @@ function Persistence() {
   // private methods
 
   var persistCacheToDatabase = function() {
-    var commands = []
+    var commands = [],
+        yearMonth = 'date-' + new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth()+1) + ':',
+        push = function(namespace, key, value) {
+          // persist metrics with two key values, one date based
+          // e.g. users:js_enabled and date-2013-01:users:js_enabled
+          commands.push(['HINCRBY',namespace,'total:' + key,value]);
+          commands.push(['HINCRBY',namespace,yearMonth + key,value]);
+        };
 
     for (var appId in appCache) {
       var app = appCache[appId],
-          metric;
+          metric,
+          key;
 
       ['users', 'pageImpressions'].forEach(function(scope) {
         ['js_enabled','js_disabled'].forEach(function(js) {
           metric = app[scope][js];
           if (metric) {
-            commands.push([
-              'HINCRBY',
-              APP_NAMESPACE + ':' + appId,
-              scope + ':' + js,
-              metric
-            ]);
-
-            commands.push([
-              'HINCRBY',
-              GLOBAL_NAMESPACE,
-              scope + ':' + js,
-              metric
-            ]);
+            key = scope + ':' + js;
+            // persist stats for this app but also globally
+            push(APP_NAMESPACE + ':' + appId, key, metric);
+            push(GLOBAL_NAMESPACE, key, metric);
           }
         });
       });
@@ -75,9 +78,10 @@ function Persistence() {
       redisClient.multi(commands).exec(function (err, replies) {
         if (err) {
           console.error('! Error persisting to Redis: ' + inspect(err))
-        } else {
+        } /* else {
           console.log('Persisted ' + commands.length + ' items to Redis successfully');
-        }
+          console.log(commands);
+        } */
       });
     }
 
@@ -93,5 +97,5 @@ function Persistence() {
   };
 }
 
-persistence = new Persistence();
+var persistence = new Persistence();
 exports.save = persistence.save;
