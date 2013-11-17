@@ -1,0 +1,4 @@
+/* Allow for fixed nav at the top */
+.nav-space {
+  height: 70px;
+}
