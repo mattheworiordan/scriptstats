@@ -1,13 +1,11 @@
 "use strict";
 
 function Persistence() {
-  var APP_NAMESPACE = 'stats:app',
-      GLOBAL_NAMESPACE = 'stats:global',
-      redis = require('redis'),
-      url = require('url'),
+  var config = require('./config'),
+      APP_NAMESPACE = config.appNamespace,
+      GLOBAL_NAMESPACE = config.globalNamespace,
+      redisClient = config.redisClient,
       inspect = require('util').inspect,
-      redisURL = url.parse(process.env.REDISCLOUD_URL || 'redis://localhost:6379'),
-      redisClient = redis.createClient(),
       persistTimer = null,
       appCache = {};
 
