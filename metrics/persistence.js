@@ -12,12 +12,12 @@ function Persistence() {
   var appBase = function() {
     return {
       users: {
-        js_enabled: 0,
-        js_disabled: 0
+        jsEnabled: 0,
+        jsDisabled: 0
       },
       pageImpressions: {
-        js_enabled: 0,
-        js_disabled: 0
+        jsEnabled: 0,
+        jsDisabled: 0
       }
     }
   };
@@ -31,7 +31,7 @@ function Persistence() {
     if (!persistTimer) { persistTimer = setTimeout(persistCacheToDatabase, 1000); }
 
     var app = appCache[appId],
-        js_key = javascriptEnabled ? 'js_enabled' : 'js_disabled';
+        js_key = javascriptEnabled ? 'jsEnabled' : 'jsDisabled';
 
     // increment counters in appCache
     if (newUserSession) { app['users'][js_key] += 1; }
@@ -45,7 +45,7 @@ function Persistence() {
         yearMonth = 'date-' + new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth()+1) + ':',
         push = function(namespace, key, value) {
           // persist metrics with two key values, one date based
-          // e.g. users:js_enabled and date-2013-01:users:js_enabled
+          // e.g. users:jsEnabled and date-2013-01:users:jsEnabled
           commands.push(['HINCRBY',namespace,'total:' + key,value]);
           commands.push(['HINCRBY',namespace,yearMonth + key,value]);
         };
@@ -56,7 +56,7 @@ function Persistence() {
           key;
 
       ['users', 'pageImpressions'].forEach(function(scope) {
-        ['js_enabled','js_disabled'].forEach(function(js) {
+        ['jsEnabled','jsDisabled'].forEach(function(js) {
           metric = app[scope][js];
           if (metric) {
             key = scope + ':' + js;
