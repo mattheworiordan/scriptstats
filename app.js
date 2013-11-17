@@ -3,12 +3,15 @@
  * Module dependencies.
  */
 
-var express = require('express');
-var routes = require('./routes');
-var track = require('./routes/track');
-var http = require('http');
-var path = require('path');
-var engine = require('ejs-locals')
+var express = require('express'),
+    http = require('http'),
+    path = require('path'),
+    engine = require('ejs-locals');
+
+var routes = require('./routes'),
+    track = require('./routes/track'),
+    data = require('./routes/data');
+
 
 var app = express();
 
@@ -35,6 +38,8 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/track/:script/:app_id', track.impression);
+app.get('/data', data.get);
+app.get('/data/:app_id', data.get);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

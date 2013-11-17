@@ -24,13 +24,9 @@ function Persistence() {
 
   // public methods
 
-  var santizeAppId = function(appId) {
-    return appId.replace(':', '_'); // santize appId as : is reserved for namespacing
-  };
-
   // save method persists metrics to appCache
   var save = function(appId, javascriptEnabled, newUserSession) {
-    appId = santizeAppId(appId);
+    appId = config.santizeAppId(appId);
     if (!appCache[appId]) { appCache[appId] = appBase(); }
     if (!persistTimer) { persistTimer = setTimeout(persistCacheToDatabase, 1000); }
 
@@ -90,8 +86,7 @@ function Persistence() {
 
   // public interface
   return {
-    save: save,
-    santizeAppId: santizeAppId
+    save: save
   };
 }
 

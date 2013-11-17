@@ -7,3 +7,7 @@ var redis = require('redis'),
 exports.redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
 exports.appNamespace = 'stats:app';
 exports.globalNamespace = 'stats:global';
+
+exports.santizeAppId = function(appId) {
+  return appId.replace(':', '_'); // santize appId as : is reserved for namespacing
+};
