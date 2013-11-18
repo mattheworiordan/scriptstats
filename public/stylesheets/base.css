@@ -11,9 +11,22 @@
   margin-top: 20px;
 }
 
-.piechart {
-  width: 700px;
-  height: 500px;
+#stats-container h4 {
+  margin-top: 20px;
+}
+
+.piechart-container {
+  width: 752px;
+  height: 352px;
+  border: 1px solid #DDD;
+  margin-bottom: 20px;
+}
+
+.geochart-container {
+  width: 752px;
+  height: 402px;
+  border: 1px solid #DDD;
+  margin-bottom: 20px;
 }
 
 #tracking-code {

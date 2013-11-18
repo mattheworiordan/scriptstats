@@ -9,6 +9,7 @@
     "ejs": "*",
     "ejs-locals": "*",
     "express": "3.4.4",
+    "geoip-lite": "*",
     "hiredis": "*",
     "redis": "*",
     "sass": "*"

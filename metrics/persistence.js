@@ -12,12 +12,24 @@ function Persistence() {
   var appBase = function() {
     return {
       users: {
-        jsEnabled: 0,
-        jsDisabled: 0
+        jsEnabled: {
+          global: 0,
+          countries: {}
+        },
+        jsDisabled: {
+          global: 0,
+          countries: {}
+        }
       },
       pageImpressions: {
-        jsEnabled: 0,
-        jsDisabled: 0
+        jsEnabled: {
+          global: 0,
+          countries: {}
+        },
+        jsDisabled: {
+          global: 0,
+          countries: {}
+        }
       }
     }
   };
@@ -25,7 +37,7 @@ function Persistence() {
   // public methods
 
   // save method persists metrics to appCache
-  var save = function(appId, javascriptEnabled, newUserSession) {
+  var save = function(appId, javascriptEnabled, newUserSession, country) {
     appId = config.santizeAppId(appId);
     if (!appCache[appId]) { appCache[appId] = appBase(); }
     if (!persistTimer) { persistTimer = setTimeout(persistCacheToDatabase, 1000); }
@@ -33,9 +45,23 @@ function Persistence() {
     var app = appCache[appId],
         js_key = javascriptEnabled ? 'jsEnabled' : 'jsDisabled';
 
+    var updateCountryCount = function(countriesCollection, country) {
+      if (country) {
+        if (!countriesCollection[country]) {
+          countriesCollection[country] = 1;
+        } else {
+          countriesCollection[country] += 1;
+        }
+      }
+    };
+
     // increment counters in appCache
-    if (newUserSession) { app['users'][js_key] += 1; }
-    app['pageImpressions'][js_key] += 1;
+    if (newUserSession) {
+      app['users'][js_key].global += 1;
+      updateCountryCount(app['users'][js_key].countries, country);
+    }
+    app['pageImpressions'][js_key].global += 1;
+    updateCountryCount(app['pageImpressions'][js_key].countries, country);
   };
 
   // private methods
@@ -43,11 +69,16 @@ function Persistence() {
   var persistCacheToDatabase = function() {
     var commands = [],
         yearMonth = 'date-' + new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth()+1) + ':',
-        push = function(namespace, key, value) {
-          // persist metrics with two key values, one date based
+        push = function(namespace, key, metric) {
+          // persist metrics with two key metrics, one date based
           // e.g. users:jsEnabled and date-2013-01:users:jsEnabled
-          commands.push(['HINCRBY',namespace,'total:' + key,value]);
-          commands.push(['HINCRBY',namespace,yearMonth + key,value]);
+          commands.push(['HINCRBY',namespace,'total:' + key,metric]);
+          commands.push(['HINCRBY',namespace,yearMonth + key,metric]);
+        },
+        pushAppAndGlobal = function(appId, key, metric) {
+          // persist stats for this app but also globally
+          push(APP_NAMESPACE + ':' + appId, key, metric);
+          push(GLOBAL_NAMESPACE, key, metric);
         };
 
     for (var appId in appCache) {
@@ -57,12 +88,14 @@ function Persistence() {
 
       ['users', 'pageImpressions'].forEach(function(scope) {
         ['jsEnabled','jsDisabled'].forEach(function(js) {
-          metric = app[scope][js];
+          metric = app[scope][js].global;
           if (metric) {
             key = scope + ':' + js;
-            // persist stats for this app but also globally
-            push(APP_NAMESPACE + ':' + appId, key, metric);
-            push(GLOBAL_NAMESPACE, key, metric);
+            pushAppAndGlobal(appId, key, metric);
+          }
+          for (var country in app[scope][js].countries) {
+            key = scope + ':' + js + ':' + country;
+            pushAppAndGlobal(appId, key, metric);
           }
         });
       });
