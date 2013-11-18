@@ -12,10 +12,10 @@ $(function() {
           } else {
             var impressionsShown = false; // we need to show the chart once after the tab is visible else the sizing is wrong
             $('#stats-container').show().find('h3').text('Stats for ' + appId);
-            drawChart(data, 'total:users', 'visits');
+            drawChart(data, 'users', 'visits');
             $('li.impressions').on('shown.bs.tab', function() {
               if (!impressionsShown) {
-                drawChart(data, 'total:pageImpressions', 'impressions');
+                drawChart(data, 'pages', 'impressions');
                 impressionsShown = true;
               }
             });
@@ -106,11 +106,11 @@ $(function() {
   function drawChart(data, dataSet, chartId) {
     var googleData = google.visualization.arrayToDataTable([
       ['Javascript', chartId == 'visits' ? 'Visitors' : 'Page views'],
-      ['Enabled', Number(data[dataSet + ':jsEnabled'])],
-      ['Disabled', Number(data[dataSet + ':jsDisabled'])]
+      ['Enabled', Number(data[dataSet + ':js'])],
+      ['Disabled', Number(data[dataSet + ':nojs'])]
     ]);
 
-    var sampleSize = Number(data[dataSet + ':jsDisabled'] || 0) + Number(data[dataSet + ':jsEnabled'] || 0);
+    var sampleSize = Number(data[dataSet + ':nojs'] || 0) + Number(data[dataSet + ':js'] || 0);
     var chart = new google.visualization.PieChart(document.getElementById(chartId + '-piechart'));
     chart.draw(googleData, {
       colors: ['#00BB00', '#DD0000'],
@@ -130,12 +130,14 @@ $(function() {
     for (var countryDataSetKey in data) {
       country = countryDataSetKey.substr(-2,2);
       countryName = allCountries[country];
-      if ((countryDataSetKey.indexOf(dataSet + ':js') == 0) && countryName) {
-        if (!countryData[countryName]) { countryData[countryName] = { enabled: 0, disabled: 0 }; }
-        if (countryDataSetKey.indexOf(dataSet + ':jsEnabled') == 0) {
-          countryData[countryName].enabled = data[countryDataSetKey];
-        } else if (countryDataSetKey.indexOf(dataSet + ':jsDisabled') == 0) {
-          countryData[countryName].disabled = data[countryDataSetKey];
+      if (countryName) {
+        if ( (countryDataSetKey.indexOf(dataSet + ':js') == 0) || (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) ) {
+          if (!countryData[countryName]) { countryData[countryName] = { enabled: 0, disabled: 0 }; }
+          if (countryDataSetKey.indexOf(dataSet + ':js') == 0) {
+            countryData[countryName].enabled = data[countryDataSetKey];
+          } else if (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) {
+            countryData[countryName].disabled = data[countryDataSetKey];
+          }
         }
       }
     }

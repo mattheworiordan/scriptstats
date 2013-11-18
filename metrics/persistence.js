@@ -4,6 +4,8 @@ function Persistence() {
   var config = require('./config'),
       APP_NAMESPACE = config.appNamespace,
       GLOBAL_NAMESPACE = config.globalNamespace,
+      GLOBAL_DAY_NAMESPACE = config.globalDayNamespace,
+      GLOBAL_HOUR_NAMESPACE = config.globalHourNamespace,
       redisClient = config.redisClient,
       inspect = require('util').inspect,
       persistTimer = null,
@@ -12,21 +14,21 @@ function Persistence() {
   var appBase = function() {
     return {
       users: {
-        jsEnabled: {
+        js: {
           global: 0,
           countries: {}
         },
-        jsDisabled: {
+        nojs: {
           global: 0,
           countries: {}
         }
       },
-      pageImpressions: {
-        jsEnabled: {
+      pages: {
+        js: {
           global: 0,
           countries: {}
         },
-        jsDisabled: {
+        nojs: {
           global: 0,
           countries: {}
         }
@@ -43,7 +45,7 @@ function Persistence() {
     if (!persistTimer) { persistTimer = setTimeout(persistCacheToDatabase, 1000); }
 
     var app = appCache[appId],
-        js_key = javascriptEnabled ? 'jsEnabled' : 'jsDisabled';
+        js_key = javascriptEnabled ? 'js' : 'nojs';
 
     var updateCountryCount = function(countriesCollection, country) {
       if (country) {
@@ -60,20 +62,36 @@ function Persistence() {
       app['users'][js_key].global += 1;
       updateCountryCount(app['users'][js_key].countries, country);
     }
-    app['pageImpressions'][js_key].global += 1;
-    updateCountryCount(app['pageImpressions'][js_key].countries, country);
+    app['pages'][js_key].global += 1;
+    updateCountryCount(app['pages'][js_key].countries, country);
   };
 
   // private methods
 
+  var dayOfYear = function(now) {
+    var start = new Date(now.getUTCFullYear(), 0, 0),
+        diff = now - start,
+        oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+  };
+
   var persistCacheToDatabase = function() {
+    var now = new Date(),
+        yearMonth = now.getUTCFullYear() + '-' + (now.getUTCMonth()+1) + ':',
+        yearDay = now.getUTCFullYear() + '-' + dayOfYear(now) + ':',
+        hourNs = now.getUTCHours() + ':',
+        splitKey,
+        shortKey;
+
     var commands = [],
-        yearMonth = 'date-' + new Date().getUTCFullYear() + '-' + (new Date().getUTCMonth()+1) + ':',
-        push = function(namespace, key, metric) {
+        pushRaw = function(namespace, key, metric) {
+          commands.push(['HINCRBY',namespace,key,metric]);
+        },
+        pushTotalAndByMonth = function(namespace, key, metric) {
           // persist metrics with two key metrics, one date based
-          // e.g. users:jsEnabled and date-2013-01:users:jsEnabled
-          commands.push(['HINCRBY',namespace,'total:' + key,metric]);
-          commands.push(['HINCRBY',namespace,yearMonth + key,metric]);
+          // e.g. users:js and 2013-01:users:js
+          pushRaw(namespace, key, metric);
+          pushRaw(namespace, yearMonth + key, metric);
         },
         globalStats = {},
         updateGlobals = function(key, metric) {
@@ -89,17 +107,17 @@ function Persistence() {
           metric,
           key;
 
-      ['users', 'pageImpressions'].forEach(function(scope) {
-        ['jsEnabled','jsDisabled'].forEach(function(js) {
+      ['users', 'pages'].forEach(function(scope) {
+        ['js','nojs'].forEach(function(js) {
           metric = app[scope][js].global;
           if (metric) {
             key = scope + ':' + js;
-            push(APP_NAMESPACE + ':' + appId, key, metric);
+            pushTotalAndByMonth(APP_NAMESPACE + ':' + appId, key, metric);
             updateGlobals(key, metric);
           }
           for (var country in app[scope][js].countries) {
             key = scope + ':' + js + ':' + country;
-            push(APP_NAMESPACE + ':' + appId, key, metric);
+            pushTotalAndByMonth(APP_NAMESPACE + ':' + appId, key, metric);
             updateGlobals(key, metric);
           }
         });
@@ -107,8 +125,19 @@ function Persistence() {
     }
 
     // run through global aggregated stats and add to metrics queue
-    for (var appId in globalStats) {
-      push(GLOBAL_NAMESPACE, appId, globalStats[appId]);
+    for (var key in globalStats) {
+      pushTotalAndByMonth(GLOBAL_NAMESPACE, key, globalStats[key]);
+      // only aggregate total stats to day or hour aggregations
+      if (key.indexOf('month') !== 0) {
+        splitKey = key.split(':');
+        if (splitKey.length === 3) { // e.g. pages:js:US
+          // contains a country code, we measure country traffic by hour
+          pushRaw(GLOBAL_HOUR_NAMESPACE, hourNs + key, globalStats[key]);
+        } else if (splitKey.length === 2) { // e.g. pages:js
+          pushRaw(GLOBAL_HOUR_NAMESPACE, hourNs + key, globalStats[key]);
+          pushRaw(GLOBAL_DAY_NAMESPACE, yearDay + key, globalStats[key]);
+        }
+      }
     }
 
     if (commands.length) {

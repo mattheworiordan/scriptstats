@@ -54,6 +54,8 @@ exports.impression = function(req, res) {
       country = geo.country;
       req.session.country = country; // prevent further GeoIP lookups for this session
     }
+    // country = ['US','FR','GB'][Math.floor(Math.random()*3)];
+    // console.log('Simulating country ' + country);
     persistAndRespond();
   }
 };
