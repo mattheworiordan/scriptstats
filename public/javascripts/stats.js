@@ -10,7 +10,6 @@ $(function() {
           console.log(data);
           if (Object.keys(data).length == 0) {
             $('.alert').hide().text("We cannot display any stats as we've not yet recorded any for the app '" + appId + "'.  Have you added the tracking code correctly?").slideDown();
-            $('#stats-container').hide();
           } else {
             var impressionsShown = false; // we need to show the chart once after the tab is visible else the sizing is wrong
             $('#stats-container').show().find('h3').text('Stats for ' + appId);
@@ -40,25 +39,54 @@ $(function() {
       $('.progress-bar').css('width', '66%');
       loadAndDrawChart();
     } else {
-      $('#view-stats-button').on('click', function(event) {
-        event.preventDefault();
-        var appId = $('#app-id'),
-            val = appId.val().replace(/\s/, '').replace(/https?\:\/\//, '');
-        if (val == '') {
+      var trackingCode = $('#tracking-code pre').text(),
+          appId = $('#app-id');
+
+      var resetUI = function() {
+        $('.alert').hide();
+        $('#stats-container').hide();
+        $('#tracking-code').hide();
+        $('.progress').hide();
+      };
+
+      var appIdVal = function() {
+        return $('#app-id').val().replace(/\s/, '').replace(/https?\:\/\//, '');
+      };
+
+      var validateAppId = function() {
+        if (appIdVal() == '') {
           appId.animate({ 'margin-left': "-5px" }, 50, function() { appId.animate({ 'margin-left': "5px" }, 50, function() { appId.animate({ 'margin-left': "0" }, 50); }); });
           appId.closest('.form-group').addClass('has-error').removeClass('has-success');
           appId.closest('.form-group').find('.help-block').hide().text('Please enter a valid app ID in the format yourwebsite.com').slideDown(250);
-        } else {
+          return false;
+        }
+        return true;
+      }
+
+      $('#view-stats-button').on('click', function(event) {
+        event.preventDefault();
+        resetUI();
+
+        if (validateAppId()) {
           appId.closest('.form-group').removeClass('has-error').addClass('has-success');
           appId.closest('.form-group').find('.help-block').hide();
-          appId.val(val);
+          appId.val(appIdVal());
 
           $('.progress').show();
           $('.progress-bar').css('width', '33%');
-          $('#stats-container').show();
-          $('.alert').hide();
 
-          loadAndDrawChart(val);
+          loadAndDrawChart(appIdVal());
+        }
+      });
+
+      $('#generate-tracking-code').on('click', function(event) {
+        event.preventDefault();
+        resetUI();
+
+        if (validateAppId()) {
+          $('#tracking-code h3').text('Tracking code for ' + appIdVal());
+          $('#tracking-code pre').text(trackingCode.replace(/{{appId}}/g, encodeURI(appIdVal())));
+          $('#tracking-code').slideDown();
         }
       });
     }

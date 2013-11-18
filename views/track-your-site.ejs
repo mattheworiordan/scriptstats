@@ -14,7 +14,7 @@
     <p class="help-block">Optionally segment your stats by appending an identifier such as yourwebsite.com/custom</p>
   </div>
   <button type="submit" id="view-stats-button" class="btn btn-primary">View stats</button>
-  <button type="submit" class="btn btn-default">Generate tracking code</button>
+  <button type="submit" id="generate-tracking-code" class="btn btn-default">Generate tracking code</button>
 </form>
 
 <div class="progress progress-striped active" style="display: none">
@@ -43,3 +43,8 @@
   </div>
 </div>
 
+<div id="tracking-code">
+  <h3>Tracking code for</h3>
+  <p>Insert the following tracking code into the bottom of every page on your website before the closing &lt;body&gt; tag</p>
+  <pre><%=partial('tracking-code')%></pre>
+</div>

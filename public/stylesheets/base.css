@@ -16,6 +16,10 @@
   height: 500px;
 }
 
+#tracking-code {
+  display: none;
+}
+
 ul.faqs {
   list-style: none;
   padding-left: 0;
