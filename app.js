@@ -53,10 +53,10 @@ app.get('/about', routes.about);
 
 // retrieve JSON data
 app.get('/data', data.get);
-app.get('/data/:app_id', data.get);
+app.get('/data/:app_id*', data.get);
 
 // not technically a GET but needed for tracking
-app.get('/track/:script/:app_id', track.impression);
+app.get('/track/:script/:app_id*', track.impression);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

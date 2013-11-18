@@ -14,6 +14,8 @@ exports.get = function(req, res) {
       cacheKey = "global";
 
   if (appId) {
+    // if appID suffixed with another path such as /example, add to appId
+    if (req.params[0]) { appId += req.params[0]; }
     cacheKey = "app:" + appId;
   }
 

@@ -13,6 +13,9 @@ exports.impression = function(req, res) {
   res.set("Pragma", "no-cache"); // HTTP 1.0.
   res.set("Expires", 0); // Proxies.
 
+  // if appID suffixed with another path such as /example, add to appId
+  if (req.params[0]) { appId += req.params[0]; }
+
   switch (req.params.script) {
     case 'js':
       javascriptEnabled = true;
