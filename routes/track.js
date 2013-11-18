@@ -54,8 +54,14 @@ exports.impression = function(req, res) {
       country = geo.country;
       req.session.country = country; // prevent further GeoIP lookups for this session
     }
-    // country = ['US','FR','GB'][Math.floor(Math.random()*3)];
-    // console.log('Simulating country ' + country);
+    // allow country to be injected for CURL tests
+    if ( (req.host == 'localhost') || (req.host == '127.0.0.1') ) {
+      if (req.query.country) {
+        country = req.query.country;
+        req.session.param = country;
+        console.warn('Warn: Country for debugging assigned as ' + country);
+      }
+    }
     persistAndRespond();
   }
 };
