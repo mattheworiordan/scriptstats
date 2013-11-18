@@ -12,6 +12,7 @@
     "express": "3.4.4",
     "geoip-lite": "*",
     "hiredis": "*",
+    "newrelic": "*",
     "redis": "*",
     "sass": "*"
   },
