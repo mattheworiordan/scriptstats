@@ -73,6 +73,7 @@ $(function() {
           appId.closest('.form-group').removeClass('has-error').addClass('has-success');
           appId.closest('.form-group').find('.help-block').hide();
           appId.val(appIdVal());
+          top.location.hash = appIdVal();
 
           $('.progress').show();
           $('.progress-bar').css('width', '33%');
@@ -91,6 +92,14 @@ $(function() {
           $('#tracking-code').slideDown();
         }
       });
+
+      // load stats if someone has deep-linked
+      if (top.location.hash) {
+        appId.val(top.location.hash.substring(1));
+        $('.progress').show();
+        $('.progress-bar').css('width', '33%');
+        loadAndDrawChart(appIdVal());
+      }
     }
   }
 
