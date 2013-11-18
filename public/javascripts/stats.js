@@ -144,7 +144,7 @@ $(function() {
       countryName = allCountries[country];
       if (countryName) {
         if ( (countryDataSetKey.indexOf(dataSet + ':js') == 0) || (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) ) {
-          if (!countryData[countryName]) { countryData[countryName] = { enabled: 0, disabled: 0 }; }
+          if (!countryData[countryName]) { countryData[countryName] = { code: country, enabled: 0, disabled: 0 }; }
           if (countryDataSetKey.indexOf(dataSet + ':js') == 0) {
             countryData[countryName].enabled = Number(data[countryDataSetKey]);
           } else if (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) {
@@ -172,12 +172,13 @@ $(function() {
       sampleSize += Number(countryStat.disabled) + Number(countryStat.enabled);
     }
 
-    var geoChart = new google.visualization.GeoChart(document.getElementById(chartId + '-geochart'));
-    geoChart.draw(google.visualization.arrayToDataTable(geoChartData), {
-      colors: ['#00CC00', '#DD0000'],
-      width: 750,
-      height: 400
-    });
+    var geoChart = new google.visualization.GeoChart(document.getElementById(chartId + '-geochart')),
+        geoChartOptions = {
+          colors: ['#00CC00', '#DD0000'],
+          width: 750,
+          height: 400
+        };
+    geoChart.draw(google.visualization.arrayToDataTable(geoChartData), geoChartOptions);
     $('#' + chartId).find('h4.geochart').html('Javascript country level stats <small>(sample size ' + sampleSize.toLocaleString() + ')</small>');
 
     var countriesSorted = Object.keys(countryData).sort(),
@@ -193,7 +194,7 @@ $(function() {
             countryStat = countryData[country],
             disabledPct = toPercentage(countryStat.disabledPct, true)
             enabledPct = toPercentage(1 - countryStat.disabledPct / 100, true),
-            row = $('<tr>')
+            row = $('<tr data-country="' + countryStat.code + '">')
               .append($('<td data-value="' + country + '">').text(country))
               .append($('<td data-value="' + enabledPct + '">').html(enabledPct + ' <small>(' + countryStat.enabled.toLocaleString() + ')</small>'))
               .append($('<td data-value="' + countryStat.disabledPct + '">').html(disabledPct + ' <small>(' + countryStat.disabled.toLocaleString() + ')</small>'));
@@ -201,6 +202,28 @@ $(function() {
       }
       dataTable.append(tbody).slideDown();
     }
+
+    var regionButtons = $('#' + chartId).find('.region-container button');
+    regionButtons.off().on('click', function() {
+      var id = $(this).data('id'),
+          countries = $(this).data('countries'),
+          newGeoOptions = { region: null };
+
+      regionButtons.removeClass('active');
+      $(this).addClass('active');
+
+      if (id) { newGeoOptions = { region: id }; }
+      geoChart.draw(google.visualization.arrayToDataTable(geoChartData), $.extend(geoChartOptions, newGeoOptions));
+
+      if (countries) {
+        tbody.find('tr').hide();
+        $.each(countries.split(','), function(index, country) {
+          tbody.find('tr[data-country=' + country + ']').show();
+        });
+      } else {
+        tbody.find('tr').show();
+      }
+    })
   }
 
   var allCountries = {

@@ -30,6 +30,34 @@
   height: 402px;
 }
 
+.region-container {
+  margin: 0 auto 20px auto;
+  width: 752px;
+}
+
+.region-container button.btn-default {
+  background-color: #FFF;
+  color: #999;
+}
+
+.region-container button.btn-default.active {
+  background-color: #EEE;
+  color: #333;
+}
+
+.region-container button.btn {
+  border-top: 0;
+  border-color: #DDD;
+}
+
+.region-container button.btn:first-child {
+  border-top-left-radius: 0;
+}
+
+.region-container button.btn:last-child {
+  border-top-right-radius: 0;
+}
+
 table.country-stats-table {
   width: 752px;
 }
