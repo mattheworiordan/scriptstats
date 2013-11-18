@@ -103,12 +103,24 @@ $(function() {
     }
   }
 
+  function toPercentage(amount, withSymbol) {
+    var pctg = Math.round(amount * 10000) / 100;
+    if (withSymbol) {
+      return pctg + '%';
+    } else {
+      return pctg;
+    }
+  }
+
   function drawChart(data, dataSet, chartId) {
-    var googleData = google.visualization.arrayToDataTable([
-      ['Javascript', chartId == 'visits' ? 'Visitors' : 'Page views'],
-      ['Enabled', Number(data[dataSet + ':js'])],
-      ['Disabled', Number(data[dataSet + ':nojs'])]
-    ]);
+    var jsEnabled = Number(data[dataSet + ':js']),
+        jsDisabled = Number(data[dataSet + ':nojs']),
+        jsAll = jsEnabled + jsDisabled,
+        googleData = google.visualization.arrayToDataTable([
+          ['Javascript', chartId == 'visits' ? 'Visitors' : 'Page views'],
+          ['Enabled (' + toPercentage(jsEnabled / jsAll, true) + ')', jsEnabled],
+          ['Disabled (' + toPercentage(jsDisabled / jsAll, true) + ')', jsDisabled],
+        ]);
 
     var sampleSize = Number(data[dataSet + ':nojs'] || 0) + Number(data[dataSet + ':js'] || 0);
     var chart = new google.visualization.PieChart(document.getElementById(chartId + '-piechart'));
@@ -146,7 +158,7 @@ $(function() {
       var countryStat = countryData[country];
       if (countryStat.enabled && countryStat.disabled) {
         var disabledPct = countryStat.disabled / ((countryStat.disabled || 0) + (countryStat.enabled || 0));
-        countryStat.disabledPct = Math.round((disabledPct) * 10000) / 100;
+        countryStat.disabledPct = toPercentage(disabledPct);
         geoChartData.push([country, countryStat.disabledPct]);
       } else if (countryStat.enabled) {
         // no disabled
@@ -179,10 +191,12 @@ $(function() {
       for (var i=0; i < countriesSorted.length; i++) {
         var country = countriesSorted[i],
             countryStat = countryData[country],
+            disabledPct = toPercentage(countryStat.disabledPct, true)
+            enabledPct = toPercentage(1 - countryStat.disabledPct / 100, true),
             row = $('<tr>')
               .append($('<td data-value="' + country + '">').text(country))
-              .append($('<td data-value="' + (100-countryStat.disabledPct) + '">').html((100-countryStat.disabledPct) + '% <small>(' + (Number(countryStat.enabled).toLocaleString()) + ')</small>'))
-              .append($('<td data-value="' + (countryStat.disabledPct) + '">').html((countryStat.disabledPct) + '% <small>(' + (Number(countryStat.disabled).toLocaleString()) + ')</small>'));
+              .append($('<td data-value="' + enabledPct + '">').html(enabledPct + ' <small>(' + countryStat.enabled.toLocaleString() + ')</small>'))
+              .append($('<td data-value="' + countryStat.disabledPct + '">').html(disabledPct + ' <small>(' + countryStat.disabled.toLocaleString() + ')</small>'));
         tbody.append(row);
       }
       dataTable.append(tbody).slideDown();
