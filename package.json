@@ -8,6 +8,7 @@
   "dependencies": {
     "ejs": "*",
     "ejs-locals": "*",
+    "exceptional-node": "*",
     "express": "3.4.4",
     "geoip-lite": "*",
     "hiredis": "*",

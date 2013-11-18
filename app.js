@@ -13,6 +13,13 @@ var routes = require('./routes'),
     track = require('./routes/track'),
     data = require('./routes/data');
 
+var Exceptional = require('exceptional-node').Exceptional;
+if (process.env.EXCEPTIONAL_KEY) {
+  Exceptional.API_KEY = process.env.EXCEPTIONAL_KEY;
+  process.addListener('uncaughtException', function(err) {
+    Exceptional.handle(err);
+  });
+}
 
 var app = express();
 
