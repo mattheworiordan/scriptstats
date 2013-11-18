@@ -143,17 +143,21 @@ $(function() {
     }
 
     for (var country in countryData) {
-      if (countryData[country].enabled && countryData[country].disabled) {
-        var disabledPct = countryData[country].disabled / ((countryData[country].disabled || 0) + (countryData[country].enabled || 0));
-        geoChartData.push([country, Math.round((disabledPct) * 10000) / 100]);
-      } else if (countryData[country].enabled) {
+      var countryStat = countryData[country];
+      if (countryStat.enabled && countryStat.disabled) {
+        var disabledPct = countryStat.disabled / ((countryStat.disabled || 0) + (countryStat.enabled || 0));
+        countryStat.disabledPct = Math.round((disabledPct) * 10000) / 100;
+        geoChartData.push([country, countryStat.disabledPct]);
+      } else if (countryStat.enabled) {
         // no disabled
+        countryStat.disabledPct = 0;
         geoChartData.push([country, 0]);
-      } else if (countryData[country].disabled) {
+      } else if (countryStat.disabled) {
         // all disabled
+        countryStat.disabledPct = 100;
         geoChartData.push([country, 100]);
       }
-      sampleSize += Number(countryData[country].disabled) + Number(countryData[country].enabled);
+      sampleSize += Number(countryStat.disabled) + Number(countryStat.enabled);
     }
 
     var geoChart = new google.visualization.GeoChart(document.getElementById(chartId + '-geochart'));
@@ -163,6 +167,26 @@ $(function() {
       height: 400
     });
     $('#' + chartId).find('h4.geochart').html('Javascript country level stats <small>(sample size ' + sampleSize.toLocaleString() + ')</small>');
+
+    var countriesSorted = Object.keys(countryData).sort(),
+        dataTable = $('#' + chartId).find('table.country-stats-table'),
+        tbody = $('<tbody>');
+
+    dataTable.slideUp();
+
+    if (countriesSorted.length > 0) {
+      dataTable.find('tbody').remove();
+      for (var i=0; i < countriesSorted.length; i++) {
+        var country = countriesSorted[i],
+            countryStat = countryData[country],
+            row = $('<tr>')
+              .append($('<td>').text(country))
+              .append($('<td>').html((100-countryStat.disabledPct) + '% <small>(' + countryStat.enabled.toLocaleString() + ')</small>'))
+              .append($('<td>').html((countryStat.disabledPct) + '% <small>(' + countryStat.disabled.toLocaleString() + ')</small>'));
+        tbody.append(row);
+      }
+      dataTable.append(tbody).slideDown();
+    }
   }
 
   var allCountries = {
