@@ -192,7 +192,7 @@ $(function() {
       for (var i=0; i < countriesSorted.length; i++) {
         var country = countriesSorted[i],
             countryStat = countryData[country],
-            disabledPct = toPercentage(countryStat.disabledPct, true)
+            disabledPct = toPercentage(countryStat.disabledPct / 100, true)
             enabledPct = toPercentage(1 - countryStat.disabledPct / 100, true),
             row = $('<tr data-country="' + countryStat.code + '">')
               .append($('<td data-value="' + country + '">').text(country))
