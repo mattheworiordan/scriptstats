@@ -13,6 +13,7 @@ function Stats() {
       key = APP_NAMESPACE + ':' + config.santizeAppId(appId);
     }
     redisClient.hgetall(key, function (redisErr, redisObj) {
+      if (!redisObj) { redisObj = {} };
       callback(redisErr, redisObj);
     });
   };

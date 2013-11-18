@@ -19,13 +19,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Script Stats</a>
+          <a class="navbar-brand" href="/">Script Stats</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">Track your site for free</a></li>
-            <li><a href="#about">About</a></li>
+            <% navItems.forEach(function(navItem) { %>
+              <li class="<%-navItem.cssClass%>"><a href="<%-navItem.url%>"><%-navItem.title%></a></li>
+            <% }) %>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -39,5 +39,18 @@
       </div>
     </div><!-- /.container -->
 
+    <footer class="footer">
+      <div class="container">
+        <p>
+          Script Stats provided free by <a href="http://mattheworiordan.com/">Matthew O'Riordan</a>
+          <span class="divider"></span>
+          Feel free to issue <a href="https://github.com/mattheworiordan/scriptstats">pull requests on Github</a>
+          <span class="divider"></span>
+          <a href="http://uptime.scriptstats.info">Service uptime</a>
+          <span class="divider"></span>
+          <a href="http://mattheworiordan.com/">Contact</a>
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

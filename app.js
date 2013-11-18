@@ -6,7 +6,8 @@
 var express = require('express'),
     http = require('http'),
     path = require('path'),
-    engine = require('ejs-locals');
+    engine = require('ejs-locals'),
+    navHelper = require('./middleware/nav-helper').nav;
 
 var routes = require('./routes'),
     track = require('./routes/track'),
@@ -28,6 +29,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.cookieParser('8h2394iuchu9h324298yfs79g283ug487gcs87gw23'));
 app.use(express.session());
+app.use(navHelper);
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -37,9 +39,16 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/track/:script/:app_id', track.impression);
+app.get('/track-your-site', routes.trackYourSite);
+app.get('/faq', routes.faq);
+app.get('/about', routes.about);
+
+// retrieve JSON data
 app.get('/data', data.get);
 app.get('/data/:app_id', data.get);
+
+// not technically a GET but needed for tracking
+app.get('/track/:script/:app_id', track.impression);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
