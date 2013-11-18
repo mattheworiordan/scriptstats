@@ -20,11 +20,14 @@ $(function() {
                 impressionsShown = true;
               }
             });
-            setTimeout(function() {
-              $('html, body').animate({
-                scrollTop: ($('#stats-container').offset().top - $('.nav-space').height()) + 'px'
-              }, 'fast');
-            }, 10);
+            if (appId) {
+              // only scroll into view if user has just requested the stats
+              setTimeout(function() {
+                $('html, body').animate({
+                  scrollTop: ($('#stats-container').offset().top - $('.nav-space').height()) + 'px'
+                }, 'fast');
+              }, 10);
+            }
           }
         })
         .fail(function() {
@@ -99,7 +102,7 @@ $(function() {
       ['Disabled', Number(data[dataSet + ':jsDisabled'])]
     ]);
 
-    var sampleSize = Number(data[dataSet + ':jsDisabled']) + Number(data[dataSet + ':jsEnabled']);
+    var sampleSize = Number(data[dataSet + ':jsDisabled'] || 0) + Number(data[dataSet + ':jsEnabled'] || 0);
     var options = {
       title: 'Javascript Stats from a sample size of ' + sampleSize.toLocaleString(),
       is3D: true
