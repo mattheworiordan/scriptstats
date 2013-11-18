@@ -180,9 +180,9 @@ $(function() {
         var country = countriesSorted[i],
             countryStat = countryData[country],
             row = $('<tr>')
-              .append($('<td>').text(country))
-              .append($('<td>').html((100-countryStat.disabledPct) + '% <small>(' + (Number(countryStat.enabled).toLocaleString()) + ')</small>'))
-              .append($('<td>').html((countryStat.disabledPct) + '% <small>(' + (Number(countryStat.disabled).toLocaleString()) + ')</small>'));
+              .append($('<td data-value="' + country + '">').text(country))
+              .append($('<td data-value="' + (100-countryStat.disabledPct) + '">').html((100-countryStat.disabledPct) + '% <small>(' + (Number(countryStat.enabled).toLocaleString()) + ')</small>'))
+              .append($('<td data-value="' + (countryStat.disabledPct) + '">').html((countryStat.disabledPct) + '% <small>(' + (Number(countryStat.disabled).toLocaleString()) + ')</small>'));
         tbody.append(row);
       }
       dataTable.append(tbody).slideDown();

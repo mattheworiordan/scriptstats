@@ -1,6 +1,7 @@
 <% layout('layouts/default') -%>
 
 <% script('//www.google.com/jsapi') %>
+<% script('/javascripts/bootstrap-sortable.js') %>
 <% script('/javascripts/stats.js') %>
 
 <h1>Global Javascript Statistics</h1>
@@ -24,5 +25,5 @@
     <li class="impressions"><a href="#impressions" data-toggle="tab">By Impressions</a></li>
   </ul>
 
-  <%- partial('_stats-container-graphs') %>
+  <%- partial('_stats-container') %>
 </div>

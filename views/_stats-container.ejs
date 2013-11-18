@@ -1,0 +1,23 @@
+<div class="tab-content">
+  <% ['visits', 'impressions'].forEach(function(dataScope) { %>
+    <div class="tab-pane <%=dataScope == 'visits' ? 'active' : ''%>" id="<%=dataScope%>">
+      <h4 class="piechart">Javascript global stats</h4>
+      <div class="piechart-container">
+        <div id="<%=dataScope%>-piechart" class="piechart"></div>
+      </div>
+      <h4 class="geochart">Javascript country level stats</h4>
+      <div class="geochart-container">
+        <div id="<%=dataScope%>-geochart" class="geochart"></div>
+      </div>
+      <table class="table table-striped country-stats-table sortable">
+        <thead>
+          <tr>
+            <th data-defaultsort='asc' data-defaultsign='az'>Country</th>
+            <th>JS enabled</th>
+            <th>JS disabled</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  <% }); %>
+</div>
