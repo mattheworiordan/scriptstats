@@ -52,14 +52,21 @@ exports.impression = function(req, res) {
     var geo = geoip.lookup(req.ip);
     if (geo && countries[geo.country]) {
       country = geo.country;
-      req.session.country = country; // prevent further GeoIP lookups for this session
+    } else {
+      country = '00'; // special unknown country we can measure traffic against
     }
+
+    req.session.country = country; // prevent further GeoIP lookups for this session
+
     // allow country to be injected for CURL tests
-    if ( (req.host == 'localhost') || (req.host == '127.0.0.1') ) {
-      if (req.query.country) {
-        country = req.query.country;
-        req.session.param = country;
-        console.warn('Warn: Country for debugging assigned as ' + country);
+    if (req.query.country)
+      if (process.env.NODE_ENV != 'production') {
+        if ( (req.host == 'localhost') || (req.host == '127.0.0.1') ) {
+        {
+          country = req.query.country;
+          req.session.param = country;
+          console.warn('Warn: Country for debugging assigned as ' + country);
+        }
       }
     }
     persistAndRespond();

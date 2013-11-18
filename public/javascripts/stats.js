@@ -190,6 +190,7 @@ $(function() {
   }
 
   var allCountries = {
+    '00': "Unknown Country",
     'A1': "Anonymous Proxy",
     'A2': "Satellite Provider",
     'O1': "Other Country",
