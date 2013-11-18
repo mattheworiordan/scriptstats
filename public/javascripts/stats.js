@@ -134,9 +134,9 @@ $(function() {
         if ( (countryDataSetKey.indexOf(dataSet + ':js') == 0) || (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) ) {
           if (!countryData[countryName]) { countryData[countryName] = { enabled: 0, disabled: 0 }; }
           if (countryDataSetKey.indexOf(dataSet + ':js') == 0) {
-            countryData[countryName].enabled = data[countryDataSetKey];
+            countryData[countryName].enabled = Number(data[countryDataSetKey]);
           } else if (countryDataSetKey.indexOf(dataSet + ':nojs') == 0) {
-            countryData[countryName].disabled = data[countryDataSetKey];
+            countryData[countryName].disabled = Number(data[countryDataSetKey]);
           }
         }
       }
