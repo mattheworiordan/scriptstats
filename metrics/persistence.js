@@ -75,10 +75,13 @@ function Persistence() {
           commands.push(['HINCRBY',namespace,'total:' + key,metric]);
           commands.push(['HINCRBY',namespace,yearMonth + key,metric]);
         },
-        pushAppAndGlobal = function(appId, key, metric) {
-          // persist stats for this app but also globally
-          push(APP_NAMESPACE + ':' + appId, key, metric);
-          push(GLOBAL_NAMESPACE, key, metric);
+        globalStats = {},
+        updateGlobals = function(key, metric) {
+          if (!globalStats[key]) {
+            globalStats[key] = metric;
+          } else {
+            globalStats[key] += metric;
+          }
         };
 
     for (var appId in appCache) {
@@ -91,14 +94,21 @@ function Persistence() {
           metric = app[scope][js].global;
           if (metric) {
             key = scope + ':' + js;
-            pushAppAndGlobal(appId, key, metric);
+            push(APP_NAMESPACE + ':' + appId, key, metric);
+            updateGlobals(key, metric);
           }
           for (var country in app[scope][js].countries) {
             key = scope + ':' + js + ':' + country;
-            pushAppAndGlobal(appId, key, metric);
+            push(APP_NAMESPACE + ':' + appId, key, metric);
+            updateGlobals(key, metric);
           }
         });
       });
+    }
+
+    // run through global aggregated stats and add to metrics queue
+    for (var appId in globalStats) {
+      push(GLOBAL_NAMESPACE, appId, globalStats[appId]);
     }
 
     if (commands.length) {
@@ -115,7 +125,7 @@ function Persistence() {
     // clear persist timer & cache
     persistTimer = null;
     appCache = {};
-  }
+  };
 
   // public interface
   return {
