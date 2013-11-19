@@ -174,7 +174,7 @@ $(function() {
 
     var geoChart = new google.visualization.GeoChart(document.getElementById(chartId + '-geochart')),
         geoChartOptions = {
-          colors: ['#00CC00', '#DD0000'],
+          colors: jsDisabled == 0 ? ['#00CC00'] : ['#00CC00', '#DD0000'],
           width: 750,
           height: 400
         };
