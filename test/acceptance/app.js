@@ -1,4 +1,4 @@
-var setup = require('./setup'), // this must run first to ensure environment vars are set
+var setup = require('../../lib/test/setup'), // this must run first to ensure environment vars are set
     request = require('supertest');
 
 process.env.PORT = 10000 + Math.floor(Math.random(10000));
