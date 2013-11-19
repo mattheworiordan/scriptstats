@@ -143,8 +143,8 @@ function Persistence() {
     if (commands.length) {
       redisClient.multi(commands).exec(function (err, replies) {
         if (err) {
-          console.error('! Error persisting to Redis: ' + inspect(err))
-        } else if (process.env.NODE_ENV != 'production') {
+          console.error('! Error persisting to Redis: ' + inspect(err));
+        } else if ((process.env.NODE_ENV != 'production') && (process.env.DEBUG)) {
           console.log('Persisted ' + commands.length + ' items to Redis successfully');
           console.log(commands);
         }

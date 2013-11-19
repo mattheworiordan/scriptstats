@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+Dir.chdir(File.expand_path('../../', __FILE__)) do
+  if File.exists?('.env')
+    File.open('.env') do |file|
+      file.each do |line|
+        key, val = line.split('=').map(&:strip)
+        if key !=~ /^#/
+          ENV[key] = val
+        end
+      end
+    end
+  end
+
+  if !File.exists?('node_modules/supertest/index.js')
+    puts "Installing supertest module"
+    system 'npm install supertest'
+  end
+
+  if !File.exists?('node_modules/should/index.js')
+    puts "Installing should module"
+    system 'npm install should'
+  end
+
+  if system('which mocha') then
+    system "mocha --recursive #{ARGV.join(' ')}"
+  else
+    puts 'Error, you need to install nodemon.'
+    puts 'Run: npm install nodemon -g'
+    exit 1
+  end
+end
