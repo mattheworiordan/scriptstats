@@ -5,7 +5,7 @@ var setup = require('../../lib/test/setup'), // this must run first to ensure en
     redis = require('../../metrics/config');
 
 var app = require('../../app.js').app,
-    persistPause = 1000 + 500;
+    persistPause = 1000 + 100;
 
 describe('persistence', function () {
   this.timeout(3000);

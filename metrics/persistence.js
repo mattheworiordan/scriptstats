@@ -116,9 +116,12 @@ function Persistence() {
             updateGlobals(key, metric);
           }
           for (var country in app[scope][js].countries) {
-            key = scope + ':' + js + ':' + country;
-            pushTotalAndByMonth(APP_NAMESPACE + ':' + appId, key, metric);
-            updateGlobals(key, metric);
+            metric = app[scope][js].countries[country];
+            if (metric) {
+              key = scope + ':' + js + ':' + country;
+              pushTotalAndByMonth(APP_NAMESPACE + ':' + appId, key, metric);
+              updateGlobals(key, metric);
+            }
           }
         });
       });
