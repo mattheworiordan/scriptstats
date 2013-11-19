@@ -113,8 +113,8 @@ $(function() {
   }
 
   function drawChart(data, dataSet, chartId) {
-    var jsEnabled = Number(data[dataSet + ':js']),
-        jsDisabled = Number(data[dataSet + ':nojs']),
+    var jsEnabled = Number(data[dataSet + ':js']) || 0,
+        jsDisabled = Number(data[dataSet + ':nojs']) || 0,
         jsAll = jsEnabled + jsDisabled,
         googleData = google.visualization.arrayToDataTable([
           ['Javascript', chartId == 'visits' ? 'Visitors' : 'Page views'],
