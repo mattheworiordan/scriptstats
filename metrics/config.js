@@ -3,7 +3,7 @@ var redis = require('redis'),
     redisURL = url.parse(process.env.REDISCLOUD_URL || 'redis://localhost:6379');
 
 var redisClient = redis.createClient(redisURL.port, redisURL.hostname, {no_ready_check: true});
-if (redisURL.auth) { exports.redisClient.auth(redisURL.auth.split(":")[1]); }
+if (redisURL.auth) { redisClient.auth(redisURL.auth.split(":")[1]); }
 
 exports.redisClient = redisClient;
 exports.appNamespace = (process.env.TEST_NAMESPACE || '') + 'ap';
