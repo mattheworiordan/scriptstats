@@ -207,21 +207,39 @@ $(function() {
     regionButtons.off().on('click', function() {
       var id = $(this).data('id'),
           countries = $(this).data('countries'),
-          newGeoOptions = { region: null };
+          newGeoOptions = { region: null },
+          filteredData = [];
 
       regionButtons.removeClass('active');
       $(this).addClass('active');
 
-      if (id) { newGeoOptions = { region: id }; }
-      geoChart.draw(google.visualization.arrayToDataTable(geoChartData), $.extend(geoChartOptions, newGeoOptions));
+      function addCountryFromGeoChartData(country) {
+        var countryName = allCountries[country];
+        for (var i = 0; i < geoChartData.length; i++) {
+          if (geoChartData[i][0] == countryName) {
+            filteredData.push([countryName, geoChartData[i][1]]);
+          }
+        }
+      }
 
       if (countries) {
         tbody.find('tr').hide();
         $.each(countries.split(','), function(index, country) {
           tbody.find('tr[data-country=' + country + ']').show();
+          addCountryFromGeoChartData(country);
         });
       } else {
         tbody.find('tr').show();
+      }
+
+      if (id) {
+        newGeoOptions = { region: id };
+      }
+      if (filteredData.length) {
+        filteredData.unshift(['Disabled', 'Percentage without Javascript']);
+        geoChart.draw(google.visualization.arrayToDataTable(filteredData), $.extend(geoChartOptions, newGeoOptions));
+      } else {
+        geoChart.draw(google.visualization.arrayToDataTable(geoChartData), $.extend(geoChartOptions, newGeoOptions));
       }
     })
   }
