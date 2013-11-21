@@ -2,10 +2,11 @@
 <script language="Javascript">
   (function() {
     var jsTracking = new Image();
-    jsTracking.src = '//scriptstats.herokuapp.com/track/js/{{appId}}';
+    jsTracking.src = 'https://scriptstats' + '.herokuapp' = '.com' + '/track/js/{{appId}}';
   })();
 </script>
 <noscript>
-  <img src="//scriptstats.herokuapp.com/track/no-js/{{appId}}" width="1" height="1" style="opacity:0.1; filter:alpha(opacity=10);">
+  <!-- obfuscated URL to help prevent spammy crawlers hitting this URL -->
+  <img src="https://scriptstats.herokuapp.com/&#47&#116&#114&#97&#99&#107&#47&#110&#111&#45&#106&#115&#47&#13&#10{{appId}}" width="1" height="1" style="opacity:0.01; filter:alpha(opacity=1);">
 </noscript>
 <!-- /end scriptstats.info javascript tracking code -->
