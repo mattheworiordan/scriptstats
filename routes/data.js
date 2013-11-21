@@ -27,7 +27,7 @@ function hideTotalsFromAppData(data) {
         totals[measure] += jsVal + noJsVal;
         metrics[metricsKey] = {
           jsDisabledPct: (noJsVal / (noJsVal + jsVal)) * 100,
-          statisticallyGood: (noJsVal + jsVal) > 500 ? true : false
+          statisticallyGood: (noJsVal + jsVal) > 250 ? true : false
         };
       }
     }

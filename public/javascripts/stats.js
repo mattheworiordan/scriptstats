@@ -258,30 +258,36 @@ $(function() {
                 jsEnabled = data[measure + ':js:' + country] || 0;
                 jsDisabled = data[measure + ':nojs:' + country] || 0;
                 countryName = GeoData.countryNameFromCode(country);
-                regionalData.push([countryName, toPercentage(jsDisabled / (jsEnabled + jsDisabled))]);
-                regionalTable.push({
-                  country: country,
-                  countryName: countryName,
-                  disabledComment: '(' + jsDisabled.toLocaleString() + ')',
-                  enabledComment: '(' + jsEnabled.toLocaleString() + ')',
-                  disabledPct: toPercentage(jsDisabled / (jsEnabled + jsDisabled)),
-                  enabledPct: toPercentage(jsEnabled / (jsEnabled + jsDisabled))
-                });
-                regionalStatsCount += jsEnabled + jsDisabled;
+                if (jsEnabled + jsDisabled > 20) { // filter out tiny values that mess up that geo charts
+                  regionalData.push([countryName, toPercentage(jsDisabled / (jsEnabled + jsDisabled))]);
+                  regionalTable.push({
+                    country: country,
+                    countryName: countryName,
+                    disabledComment: '(' + jsDisabled.toLocaleString() + ')',
+                    enabledComment: '(' + jsEnabled.toLocaleString() + ')',
+                    disabledPct: toPercentage(jsDisabled / (jsEnabled + jsDisabled)),
+                    enabledPct: toPercentage(jsEnabled / (jsEnabled + jsDisabled))
+                  });
+                  regionalStatsCount += jsEnabled + jsDisabled;
+                }
               }
             }
           }
         }
 
+        var totalCount = data[measure + ':js'] + data[measure + ':nojs'],
+            disabledPct = toPercentage(data[measure + ':nojs'] / totalCount),
+            enabledPct = toPercentage(data[measure + ':js'] / totalCount);
+
         return {
           global: {
             data: [
-              ['Javascript',                                                  measureDescription      ],
-              ['Enabled (' + data[measure + ':js'].toLocaleString() + ')',    data[measure + ':js']   ],
-              ['Disabled (' + data[measure + ':nojs'].toLocaleString() + ')', data[measure + ':nojs'] ]
+              ['Javascript',                                                                          measureDescription      ],
+              ['Enabled (' + enabledPct + '%)',      data[measure + ':js']   ],
+              ['Disabled (' + disabledPct + '%)',  data[measure + ':nojs'] ]
             ],
             disabledTotal: data[measure + ':nojs'],
-            statsComment: 'sample size ' + (data[measure + ':js'] + data[measure + ':nojs']).toLocaleString()
+            statsComment: 'sample size ' + totalCount.toLocaleString()
           },
           regional: {
             data: regionalData,
