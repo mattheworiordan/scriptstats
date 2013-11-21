@@ -44,8 +44,7 @@ app.use(app.router);
 app.use(sass.middleware({
   src: __dirname + '/public/scss',
   dest: __dirname + '/public/stylesheets',
-  prefix: '/stylesheets',
-  debug: true
+  prefix: '/stylesheets'
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
