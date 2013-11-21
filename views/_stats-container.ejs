@@ -1,22 +1,27 @@
+<ul class="nav nav-tabs" id="measurement-nav">
+  <li class="active" data-measure="users"><a href="#users" data-toggle="tab">By Visits</a></li>
+  <li data-measure="pages"><a href="#pages" data-toggle="tab">By Impressions</a></li>
+</ul>
+
 <div class="tab-content">
-  <% ['visits', 'impressions'].forEach(function(dataScope) { %>
-    <div class="tab-pane <%=dataScope == 'visits' ? 'active' : ''%>" id="<%=dataScope%>">
+  <% ['users', 'pages'].forEach(function(measure, index) { %>
+    <div class="tab-pane <%=index == 0 ? 'active' : ''%>" id="<%=measure%>">
       <h4 class="piechart">Javascript global stats</h4>
       <div class="piechart-container">
-        <div id="<%=dataScope%>-piechart" class="piechart"></div>
+        <div id="<%=measure%>-piechart" class="piechart"></div>
       </div>
       <h4 class="geochart">Javascript country level stats</h4>
       <div class="geochart-container">
-        <div id="<%=dataScope%>-geochart" class="geochart"></div>
+        <div id="<%=measure%>-geochart" class="geochart"></div>
       </div>
       <div class="region-container">
         <div class="btn-group">
           <button type="button" class="btn btn-default active">World</button>
-          <button type="button" class="btn btn-default" data-id="150" data-countries="GG,JE,AX,DK,EE,FI,FO,GB,IE,IM,IS,LT,LV,NO,SE,SJ,AT,BE,CH,DE,DD,FR,FX,LI,LU,MC,NL,BG,BY,CZ,HU,MD,PL,RO,RU,SU,SK,UA,AD,AL,BA,ES,GI,GR,HR,IT,ME,MK,MT,CS,RS,PT,SI,SM,VA,YU">Europe</button>
-          <button type="button" class="btn btn-default" data-id="019" data-countries="BM,CA,GL,PM,US,AG,AI,AN,AW,BB,BL,BS,CU,DM,DO,GD,GP,HT,JM,KN,KY,LC,MF,MQ,MS,PR,TC,TT,VC,VG,VI,BZ,CR,GT,HN,MX,NI,PA,SV,AR,BO,BR,CL,CO,EC,FK,GF,GY,PE,PY,SR,UY,VE">Americas</button>
-          <button type="button" class="btn btn-default" data-id="142" data-countries="TM,TJ,KG,KZ,UZ,CN,HK,JP,KP,KR,MN,MO,TW,AF,BD,BT,IN,IR,LK,MV,NP,PK,BN,ID,KH,LA,MM,BU,MY,PH,SG,TH,TL,TP,VN,AE,AM,AZ,BH,CY,GE,IL,IQ,JO,KW,LB,OM,PS,QA,SA,NT,SY,TR,YE,YD">Asia</button>
-          <button type="button" class="btn btn-default" data-id="009" data-countries="AU,NF,NZ,FJ,NC,PG,SB,VU,FM,GU,KI,MH,MP,NR,PW,AS,CK,NU,PF,PN,TK,TO,TV,WF,WS">Oceania</button>
-          <button type="button" class="btn btn-default" data-id="002" data-countries="DZ,EG,EH,LY,MA,SD,TN,BF,BJ,CI,CV,GH,GM,GN,GW,LR,ML,MR,NE,NG,SH,SL,SN,TG,AO,CD,ZR,CF,CG,CM,GA,GQ,ST,TD,BI,DJ,ER,ET,KE,KM,MG,MU,MW,MZ,RE,RW,SC,SO,TZ,UG,YT,ZM,ZW,BW,LS,NA,SZ,ZA">Africa</button>
+          <button type="button" class="btn btn-default" data-id="150">Europe</button>
+          <button type="button" class="btn btn-default" data-id="019">Americas</button>
+          <button type="button" class="btn btn-default" data-id="142">Asia</button>
+          <button type="button" class="btn btn-default" data-id="009">Oceania</button>
+          <button type="button" class="btn btn-default" data-id="002">Africa</button>
         </div>
       </div>
       <table class="table table-striped country-stats-table sortable">

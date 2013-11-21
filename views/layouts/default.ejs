@@ -24,7 +24,7 @@
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <% script ('/javascripts/bootstrap.min.js') -%>
-    <% stylesheet ('/stylesheets/bootstrap-theme-united.min.css') -%>
+    <% stylesheet ('/stylesheets/bootstrap-theme-united.css') -%>
     <% stylesheet ('/stylesheets/base.css') -%>
     <%-scripts %>
     <%-stylesheets %>
@@ -77,11 +77,12 @@
     <script language="Javascript">
       (function() {
         var jsTracking = new Image();
-        jsTracking.src = '//scriptstats.herokuapp.com/track/js/scriptstats.info';
+        jsTracking.src = 'https://scriptstats' + '.herokuapp' + '.com' + '/track/js/scriptstats.info';
       })();
     </script>
     <noscript>
-      <img src="//scriptstats.herokuapp.com/track/no-js/scriptstats.info" width="1" height="1" style="opacity:0.1; filter:alpha(opacity=10);">
+      <!-- obfuscated URL to help prevent dodgy crawlers hitting this URL -->
+      <img src="https://scriptstats.herokuapp.com/&#116&#114&#97&#99&#107&#47&#110&#111&#45&#106&#115/scriptstats.info" width="1" height="1" style="opacity:0.01; filter:alpha(opacity=1);">
     </noscript>
     <!-- /end scriptstats.info javascript tracking code -->
   </body>

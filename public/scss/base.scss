@@ -7,7 +7,7 @@
   display: none;
 }
 
-#visit-impression-nav {
+#measurement-nav {
   margin-top: 20px;
 }
 
@@ -33,37 +33,36 @@
 .region-container {
   margin: 0 auto 20px auto;
   width: 752px;
-}
 
-.region-container button.btn-default {
-  background-color: #FFF;
-  color: #999;
-}
+  button.btn-default {
+    background-color: #FFF;
+    color: #999;
+  }
 
-.region-container button.btn-default.active {
-  background-color: #EEE;
-  color: #333;
-}
+  button.btn-default.active {
+    background-color: #EEE;
+    color: #333;
+  }
 
-.region-container button.btn {
-  border-top: 0;
-  border-color: #DDD;
-}
+  button.btn {
+    border-top: 0;
+    border-color: #DDD;
+  }
 
-.region-container button.btn:first-child {
-  border-top-left-radius: 0;
-}
+  button.btn:first-child {
+    border-top-left-radius: 0;
+  }
 
-.region-container button.btn:last-child {
-  border-top-right-radius: 0;
+  button.btn:last-child {
+    border-top-right-radius: 0;
+  }
 }
 
 table.country-stats-table {
   width: 752px;
-}
-
-table.country-stats-table small {
-  color: #999;
+  small {
+    color: #999;
+  }
 }
 
 #tracking-code {
@@ -76,15 +75,15 @@ ul.faqs {
   margin: 40px 0 40px 0;
   border: 1px solid #E0E0E0;
   border-radius: 5px;
-}
 
-ul.faqs li {
-  padding: 0 20px 10px 20px;
-  border-bottom: 1px solid #E0E0E0;
-}
+  li {
+    padding: 0 20px 10px 20px;
+    border-bottom: 1px solid #E0E0E0;
+  }
 
-ul.faqs li:last-child {
-  border-bottom: none;
+  li:last-child {
+    border-bottom: none;
+  }
 }
 
 form.track-site {
@@ -94,10 +93,30 @@ form.track-site {
   border: 1px solid #E0E0E0;
   border-radius: 5px;
   max-width: 700px;
+  overflow: visible;
+
+  button {
+    margin-right: 15px;
+  }
+
+  .alert {
+    .glyphicon {
+      font-size: 30px;
+      float: left;
+    }
+    a {
+      color: #339;
+    }
+  }
+
+  .beside-icon {
+    margin-left: 40px;
+  }
 }
 
-form.track-site button {
-  margin-right: 15px;
+small.stats-notice {
+  margin-left: 10em;
+  color: #BBB;
 }
 
 .footer {
@@ -141,22 +160,20 @@ table.sortable span.arrow, span.reversed {
     margin-top: -2px;
 }
 
-    table.sortable span.arrow.up {
-        border-color: transparent transparent #ccc transparent;
-        margin-top: -7px;
-    }
+table.sortable span.arrow.up {
+    border-color: transparent transparent #ccc transparent;
+    margin-top: -7px;
+}
 
 table.sortable span.reversed {
     border-color: transparent transparent #ccc transparent;
     margin-top: -7px;
 }
 
-    table.sortable span.reversed.up {
-        border-color: #ccc transparent transparent transparent;
-        margin-top: -2px;
-    }
-
-
+table.sortable span.reversed.up {
+    border-color: #ccc transparent transparent transparent;
+    margin-top: -2px;
+}
 
 table.sortable span.az:before {
     content: "a .. z";

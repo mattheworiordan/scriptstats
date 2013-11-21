@@ -8,6 +8,7 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     engine = require('ejs-locals'),
+    sass = require('node-sass'),
     navHelper = require('./middleware/nav-helper').nav;
 
 var routes = require('./routes'),
@@ -39,6 +40,14 @@ app.use(express.cookieParser('8h2394iuchu9h324298yfs79g283ug487gcs87gw23'));
 app.use(express.session());
 app.use(navHelper);
 app.use(app.router);
+
+app.use(sass.middleware({
+  src: __dirname + '/public/scss',
+  dest: __dirname + '/public/stylesheets',
+  prefix: '/stylesheets',
+  debug: true
+}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
